@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>周鹏定制的天气预报</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="lib/jquery.js"></script>
+    <script src="lib/vue.js"></script>
+
+    <style>
+        *{
+			padding: 0;
+			margin: 0;
+            /*background: #eee;*/
+        }
+		html, body {
+			height: 100%;
+		}
+		#all {
+			overflow: hidden;
+			height: 100%;
+		}
+        #app {
+            width: 320px;
+            border: 1px solid #000;
+            padding: 5px;
+            overflow: auto;
+            color: #000;;
+            margin: 5px auto;
+        }
+		#main {
+
+		}
+        /*@media screen and (max-width: 420px){*/
+
+
+        /*}*/
+		.bgColorCold {
+			background: -webkit-linear-gradient(rgba(25,25,255,0.45), rgba(222,19,19,0.75)); /* Safari 5.1 - 6.0 */
+            background: -o-linear-gradient(rgba(25,25,255,0.45), rgba(222,19,19,0.75)); /* Opera 11.1 - 12.0 */
+            background: -moz-linear-gradient(rgba(25,25,255,0.45), rgba(222,19,19,0.75)); /* Firefox 3.6 - 15 */
+            background: linear-gradient(rgba(25,25,255,0.45), rgba(222,19,19,0.75)); /* 标准的语法 */
+		}
+        .bgColorHot {
+            background: -webkit-linear-gradient(rgba(222,19,19,0.75), rgba(25,25,255,0.45)); /* Safari 5.1 - 6.0 */
+            background: -o-linear-gradient(rgba(222,19,19,0.75), rgba(25,25,255,0.45)); /* Opera 11.1 - 12.0 */
+            background: -moz-linear-gradient(rgba(222,19,19,0.75), rgba(25,25,255,0.45)); /* Firefox 3.6 - 15 */
+            background: linear-gradient(rgba(222,19,19,0.75), rgba(25,25,255,0.45)); /* 标准的语法 */
+        }
+        /*温度小于15度使用*/
+        .bgColorCold15 {
+            background: -webkit-linear-gradient(rgba(25,25,255,0.8), rgba(222,19,19,0.75)); /* Safari 5.1 - 6.0 */
+            background: -o-linear-gradient(rgba(25,25,255,0.8), rgba(222,19,19,0.75)); /* Opera 11.1 - 12.0 */
+            background: -moz-linear-gradient(rgba(25,25,255,0.8), rgba(222,19,19,0.75)); /* Firefox 3.6 - 15 */
+            background: linear-gradient(rgba(25,25,255,0.8), rgba(222,19,19,0.75)); /* 标准的语法 */
+        }
+        /*温度大于33度使用*/
+        .bgColorHot33 {
+            background: -webkit-linear-gradient(rgba(222,19,19,1), rgba(25,25,255,0.45)); /* Safari 5.1 - 6.0 */
+            background: -o-linear-gradient(rgba(222,19,19,1), rgba(25,25,255,0.45)); /* Opera 11.1 - 12.0 */
+            background: -moz-linear-gradient(rgba(222,19,19,1), rgba(25,25,255,0.45)); /* Firefox 3.6 - 15 */
+            background: linear-gradient(rgba(222,19,19,1), rgba(25,25,255,0.45)); /* 标准的语法 */
+        }
+        .yesterday, .forecast{
+            border: 1px solid #000;
+            margin-top: 5px;
+        }
+        input {
+            border: 1px solid #41e623;
+            width: 160px;
+            height: 22px;
+        }
+        .search {
+            margin: 5px 0 ;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<div id="all">
+	<div id="app">
+
+    <div id="main">
+        <h2 class="title"> <span>{{Data.city}}</span>  <span> 温度: {{Data.wendu}}℃</span></h2>
+        <div>{{Data.ganmao}}</div>
+        <div class="search">
+            <input type="text">
+            <button @click="search" >查询城市</button>
+            <button @click="set_default" >设为默认</button>
+        </div>
+        <div class="yesterday">
+            <div>
+                <span class="date">昨天天气:</span>
+                <span class="type">{{y.type}}</span>
+            </div>
+            <div><span class="fx">{{y.fx}}</span><span class="fl">{{y.fl}}</span></div>
+            <div>气温范围:【 {{y.low}} --- {{ y.high }} 】</div>
+        </div>
+
+        <div class="forecast" v-for="(y, index) in Data.forecast">
+            <div>
+                <span class="date">{{y.date}}</span>
+                <span class="type">{{y.type}}</span>
+            </div>
+            <div><span class="fx">{{y.fengxiang}}</span><span class="fl">{{y.fengli}}</span></div>
+            <div>气温范围:【 {{y.low}} --- {{ y.high }} 】</div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+<script>
+
+
+    let vm = new Vue({
+        el: '#app',
+        data: {
+            Data: {},
+            city: "岳阳",
+            y: {}
+        },
+        created: async function () {
+            let default_city = localStorage.getItem('default_city');
+            console.log("default_city: ", default_city);
+
+            if (default_city) {
+                this.city = default_city;
+            } else {
+                let _this = this;
+                await $.ajax({
+                    type: 'get',
+                    url: `https://restapi.amap.com/v3/ip?parameters&key=074f00f5d401cef6fc668b81b92cc809`,
+                    success(response) {
+                        if (response.status == 1 && response.city) {
+                            _this.city = response.city;
+                        }
+                    }
+                });
+            }
+            await this.get_data();
+
+        },
+        methods: {
+            async get_data() {
+                let _this = this;
+                await $.ajax({
+                    type: 'get',
+                    url: `https://www.apiopen.top/weatherApi?city=${_this.city}`,
+                    success(response) {
+                        console.log("response: ", response);
+
+                        if (response.code === 200) {
+                            _this.Data = response.data;
+
+                            _this.y = response.data.yesterday;
+                            _this.y.fl = _this.y.fl.slice(8, 14);
+
+                            for (let i = 0; i < _this.Data.forecast.length; i++) {
+                                _this.Data.forecast[i].fengli = _this.Data.forecast[i].fengli.slice(8, 14);
+                            }
+                        } else {
+                            alert(response.msg);
+                        }
+
+                        _this.changeBG();
+                    }
+                });
+                console.log("this.Data: ", this.Data);
+            },
+            search() {
+                let city = document.getElementsByTagName('input')[0].value;
+                console.log("city: ", city);
+                // console.log("city: ", city);
+                if (city) {
+                    this.city = city;
+                }
+                this.get_data();
+            },
+            set_default() {
+                let city = document.getElementsByTagName('input')[0].value;
+                if (city) {
+                    this.city = city;
+                }
+                localStorage.setItem('default_city', this.city);
+                alert('成功设为默认城市!');
+            },
+            changeBG() {
+                if (~~this.Data.wendu > 33) {
+                    document.getElementById('all').className = 'bgColorHot33';
+                } else if (~~this.Data.wendu > 25) {
+                    document.getElementById('all').className = 'bgColorHot';
+                } else if (~~this.Data.wendu > 15) {
+                    document.getElementById('all').className = 'bgColorCold15';
+                } else if (this.Data.wendu > -5 ) {
+                    document.getElementById('all').className = 'bgColorCold';
+                } else if (this.Data.wendu > -15 ) {
+                    document.getElementById('all').style.background = 'rgba(0,0,255,0.7)'
+                } else {
+                    document.getElementById('all').style.background = '#DDD'
+                }
+            }
+        }
+    })
+</script>
+</body>
+</html>

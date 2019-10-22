@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Made in China</title>
+    <script src="../lib/jquery.js"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            background: #f4f4f4;
+        }
+        .All{
+            width: 95%;
+            height: 900px;
+            margin: 20px auto;
+            /*border: 1px dashed #000;*/
+        }
+        .nav{
+            width: 18%;
+            height: 600px;
+            /*border: 1px solid #000;*/
+            float: left;
+        }
+        .content{
+            width: 80%;
+            height: 600px;
+            /*border: 1px solid #000;*/
+            float: right;
+        }
+        .nav ul li {
+            list-style-type: none;
+            /*height: 30px;*/
+            /*line-height: 30px;*/
+            font-size: 20px;
+            padding: 5px;
+        }
+        .content table .tr{
+            margin: 50px;
+        }
+        .tr>th{
+            margin-right: 20px;
+            font-weight: bold;
+        }
+        p{
+            font-size: 18px;
+        }
+        .layui-elem-quote {
+            margin-bottom: 10px;
+            padding: 15px;
+            line-height: 22px;
+            border-left: 5px solid #009688;
+            border-radius: 0 2px 2px 0;
+            background-color: #f2f2f2
+        }
+        .layui-input {
+            width: 90%;
+            height: 30px;
+            padding: 2px;
+            border: 1px solid gray;
+        }
+        ul>li {
+            margin: 5px;
+        }
+        .layui-table {
+            position: relative;
+        }
+        .layui-table tr {
+            position: relative;
+            top: 20px;
+        }
+        .show-number:hover {
+            cursor: not-allowed
+        }
+        .layui-btn {
+            background: #009688;
+            width: 80px;
+            height: 30px;
+            color: #FFF;
+            border: none;
+            cursor: pointer;
+            /*font-size: 16px;*/
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="All">
+    <div style=" width: 40%; margin: 10px auto">
+        <input class="layui-input localStorage" placeholder="" style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 30px;">
+    </div>
+
+    <div class="nav">
+        <ul>
+            <li class="layui-elem-quote"><input type="text" class="layui-input empty"></li>
+            <li class="layui-elem-quote"><input type="text" class="layui-input empty"></li>
+            <li class="layui-elem-quote"><input type="text" class="layui-input empty"></li>
+            <li class="layui-elem-quote"><input type="text" class="layui-input empty"></li>
+            <li class="layui-elem-quote"><input type="text" class="layui-input empty"></li>
+            <li class="layui-elem-quote"><input type="text" class="layui-input empty"></li>
+            <li class="layui-elem-quote"><input type="text" class="layui-input empty"></li>
+            <li class="layui-elem-quote"><input type="text" class="layui-input empty"></li>
+        </ul>
+        <div style="text-align: center">
+            <button class="layui-btn layui-btn-sm add_li">新增一行</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <table class="layui-table" id="table">
+            <tr class="tr">
+                <th>名称</th>
+                <th>数量</th>
+                <th>单价</th>
+                <th>总金额: <span style="color: #F00;" class="show_total"></span> 元</th>
+                <th>备注</th>
+                <th>时间</th>
+            </tr>
+            <tr class="tr_td">
+                <td><input type="text" class="layui-input delete_tr"></td>
+                <td><input type="number" class="layui-input"></td>
+                <td><input type="number" class="layui-input"></td>
+                <td><input type="text" readonly class="layui-input show-number"></td>
+                <td><input type="text" class="layui-input"></td>
+                <td><input type="date" class="layui-input date"></td>
+            </tr>
+            <tr class="tr_td">
+                <td><input type="text" class="layui-input delete_tr"></td>
+                <td><input type="number" class="layui-input"></td>
+                <td><input type="number" class="layui-input"></td>
+                <td><input type="text" readonly class="layui-input show-number"></td>
+                <td><input type="text" class="layui-input"></td>
+                <td><input type="date" class="layui-input date"></td>
+            </tr>
+            <tr class="tr_td">
+                <td><input type="text" class="layui-input delete_tr"></td>
+                <td><input type="number" class="layui-input"></td>
+                <td><input type="number" class="layui-input"></td>
+                <td><input type="text" readonly class="layui-input show-number"></td>
+                <td><input type="text" class="layui-input"></td>
+                <td><input type="date" class="layui-input date"></td>
+            </tr>
+            <tr class="tr_td">
+                <td><input type="text" class="layui-input delete_tr"></td>
+                <td><input type="number" class="layui-input"></td>
+                <td><input type="number" class="layui-input"></td>
+                <td><input type="text" readonly class="layui-input show-number"></td>
+                <td><input type="text" class="layui-input"></td>
+                <td><input type="date" class="layui-input date"></td>
+            </tr>
+            <tr class="tr_td">
+                <td><input type="text" class="layui-input delete_tr"></td>
+                <td><input type="number" class="layui-input"></td>
+                <td><input type="number" class="layui-input"></td>
+                <td><input type="text" readonly class="layui-input show-number"></td>
+                <td><input type="text" class="layui-input"></td>
+                <td><input type="date" class="layui-input date"></td>
+            </tr>
+            <tr class="tr_td">
+                <td><input type="text" class="layui-input delete_tr"></td>
+                <td><input type="number" class="layui-input"></td>
+                <td><input type="number" class="layui-input"></td>
+                <td><input type="text" readonly class="layui-input show-number"></td>
+                <td><input type="text" class="layui-input"></td>
+                <td><input type="date" class="layui-input date"></td>
+            </tr>
+
+        </table>
+        <br>
+
+        <div style="text-align: center">
+            <button class="layui-btn layui-btn-sm add_tr">新增一行</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary">准备打印</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary">立即打印</button>
+        </div>
+        <br><br>
+        <p>说明: <br>点击"准备打印"会删除名称为空的数据项和内容为空的左菜单, 帮你清空多余的内容</p>
+        <p>点击"立即打印"会删除名称为空的数据项和内容为空的左菜单, 并且开启浏览器的打印功能</p>
+
+    </div>
+</div>
+
+
+
+<script>
+    window.onload = function() {
+        // layui.use(["element", "laydate", "layer"], function () {
+
+        // var element = layui.element;
+        // var $ = layui.jquery;
+        // var laydate = layui.laydate;
+        // var layer = layui.layer;
+
+        // 渲染日历组件
+        // function date(){
+        //     var date = $(".date");
+        //     for (var i = 0; i<date.length; i++){
+        //         laydate.render({
+        //             elem: date[i],
+        //             calendar: true
+        //         });
+        //     }
+        // }
+        // date();
+
+        $(".add_tr").on("click", function () {
+            var tr_td = $(`<tr class="tr_td">
+                <td><input type="text" class="layui-input delete_tr"></td>
+                <td><input type="number" class="layui-input"></td>
+                <td><input type="number" class="layui-input"></td>
+                <td><input type="text" readonly class="layui-input show-number"></td>
+                <td><input type="text" class="layui-input"></td>
+                <td><input type="date" class="layui-input date"></td>
+            </tr>`);
+
+            $("#table").append(tr_td[0]);
+            // layer.msg("ok");
+            // date();
+        });
+
+        $(".add_li").on("click", function () {
+            var $li = $(`<li class="layui-elem-quote empty"><input type="text" class="layui-input"></li>`);
+            $(".nav ul").append($li);
+        });
+
+        $("body").delegate( $("input[type=number]"), "propertychange input", function () {
+            var number = $("input[type=number]");
+            var total = 0;
+            for (var i = 0, j = 0 ; i< (number.length/2); i++, j = j+2){
+                let k = Number(number.eq(j).val()) * Number(number.eq(j+1).val());
+                $(".show-number").eq(i).val(k.toFixed(2));
+                total += k;
+                $(".show_total").text(total.toFixed(2));
+            }
+
+        });
+
+        // delete some
+        function del() {
+            // 删除 p button
+            $("p").remove();
+            $("button").remove();
+            // 删除 li
+            let $li = $(".empty");
+            for (let i = 0; i < $li.length; i++){
+                if ("" === $li.eq(i).val()){
+                    $li.eq(i).parent().remove();
+                }
+            }
+            // 删除 tr
+            let delete_tr = $(".delete_tr");
+            for (let i = 0; i < delete_tr.length; i++){
+                if ("" === delete_tr.eq(i).val()){
+                    delete_tr.eq(i).parent().parent().remove();
+                }
+            }
+        }
+        // 准备打印
+        var prepare = $("button:contains('准备打印')");
+        prepare.on("click", function () {
+            del();
+        });
+        // // 立即打印
+        var immediately = $("button:contains('立即打印')");
+        immediately.on("click", function () {
+            del();
+            window.print();
+        })
+
+        // });
+    };
+
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>weekly-schedule</title>
+    <style>
+        .button-box{
+            width: 250px;
+            margin: 50px auto;
+        }
+        button{
+            width: 100px;height: 40px;
+            font-size: 18px;
+        }
+        #auto-save{
+            width: 204px;
+            margin-top: 5px;
+            background-color: rgb(169, 169, 169);
+        }
+        .textarea{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <table>
+
+        <tbody id="tbody">
+            <!-- template_string -->
+            <tr>
+                <td><textarea class="textarea"></textarea></td>
+                <td><textarea class="textarea"></textarea></td>
+                <td><textarea class="textarea"></textarea></td>
+                <td><textarea class="textarea"></textarea></td>
+                <td><textarea class="textarea"></textarea></td>
+                <td><textarea class="textarea"></textarea></td>
+                <td><textarea class="textarea"></textarea></td>
+                <td><textarea class="textarea"></textarea></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="button-box">
+        <button id="save">save</button>
+        <button id="reset" >reset</button>
+        <button id="auto-save" >auto-save: off</button>
+    </div>
+
+    <script>
+        const tbody = document.getElementById('tbody');
+        const textarea = tbody.getElementsByTagName('textarea');
+        const save = document.getElementById('save');
+        const reset = document.getElementById('reset');
+        const auto_save = document.getElementById('auto-save');
+        const add_row = document.getElementById('add-row');
+        const template_string = tbody.innerHTML;
+        
+        // 页面初始化数据: 首次加载和重置的时候使用的数据, 其他的时候使用localStorage里的数据
+        const initData = [
+                ["时间段", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
+                ["一大节", "", "", "", "", "", "", ""],
+                ["二大节", "", "", "", "", "", "", ""],
+                ["中午", "", "", "", "", "", "", ""],
+                ["三大节", "", "", "", "", "", "", ""],
+                ["四大节", "", "", "", "", "", "", ""],
+                ["7:00~9:00", "", "", "", "", "", "", ""],
+                ["9:00~10:30", "", "", "", "", "", "", ""],
+                ["9:00~10:30", "", "", "", "", "", "", ""],
+                ["9:00~10:30", "", "", "", "", "", "", ""],
+            ];
+
+        // 判断initData是否有误
+        for (let i = 1; i < initData.length; i++) {
+            if (initData[i].length !== initData[0].length) {
+                throw `initData第${i+1}项数据有误`;
+            }
+        }
+
+        if (!localStorage.getItem('weekly-schedule')) {
+            localStorage.setItem('weekly-schedule', JSON.stringify(initData));
+        }
+
+        //浏览器保存的数据
+        let localStorageData = JSON.parse(localStorage.getItem('weekly-schedule'));
+        let rowCount = localStorageData[0].length;
+        
+        function renderData(data) {
+            // 将table里的tr重复data.length份并添加到页面
+            tbody.innerHTML = template_string.repeat(data.length);
+            // 将data里的数据赋值到每一个textarea
+            for (let i = 0; i < textarea.length; i++) {
+                let index = Math.trunc(i / rowCount);
+                textarea[i].value = data[index][i % rowCount];
+            }
+        }
+    
+        // 页面重置
+        function resetFun(e) {
+            if (e && !confirm('确定重置?')) return;
+            localStorage.setItem('weekly-schedule', JSON.stringify(initData));
+            localStorageData = initData;
+            rowCount = initData[0].length;
+            renderData(initData);
+        };
+        reset.onclick = resetFun;
+
+        save.onclick = function () {
+            // 初始化二维数组
+            let save_data_arr = [];
+            for(let i=0; i < localStorageData.length; i++){
+                save_data_arr[i] = [];
+            }
+            // 获取textarea的值保存到localStorage
+            for (let i = 0; i < textarea.length; i++) {
+                let index = Math.trunc(i / rowCount);
+                save_data_arr[index].push(textarea[i].value)
+            }
+            localStorage.setItem('weekly-schedule', JSON.stringify(save_data_arr));
+        };
+
+        // 点击自动保存, 再点击取消自动保存
+        auto_save.onclick = function() {
+            if (document.oninput) {
+                document.oninput = null;
+                auto_save.textContent = 'auto-save: off';
+                auto_save.style.backgroundColor = 'rgb(169, 169, 169)';
+            } else {
+                save.click();
+                document.oninput =  function (e) {
+                    if ((e.target.tagName !== 'TEXTAREA')) return;
+                    save.click();
+                };
+                auto_save.textContent = 'auto-save: on';
+                auto_save.style.backgroundColor = 'rgb(50, 226, 203)';
+            }
+        }
+
+        // 如果更改了initData的数据长度, 可能会与原先localStorage保存的数据不一致, 询问是否重置数据
+        function verify() {
+            return localStorageData &&
+                (localStorageData.length !== initData.length ||
+                localStorageData[0].length !== initData[0].length) &&
+                confirm('浏览器保存的数据与页面初始化数据长度不一致, 是否重置为页面初始化数据?');
+        }
+        if (verify()) {
+            resetFun();
+        } else {
+            renderData(localStorageData);
+        }
+
+    </script>
+</body>
+</html>

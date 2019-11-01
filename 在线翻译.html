@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>在线翻译</title>
+    <script src="lib/jquery.js"></script>
+    <style>
+        #all{
+            text-align: center;
+        }
+        .button-box{
+            width: 250px;
+            margin: 50px auto;
+        }
+        .button-box button{
+            width: 200px;
+            height: 40px;
+            font-size: 18px;
+        }
+        #auto-pronunciation{
+            margin-top: 5px;
+            background-color: rgb(50, 226, 203);
+        }
+        #translate{
+
+        }
+        #input, #output{
+            width: 90%;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        @media screen and (max-width: 500px){
+            #input, #output{
+                width: 100%;
+            }
+            #translate{
+                left: calc(50% - 100px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="all">
+        <textarea id="input" cols="30" rows="10" placeholder="请输入你要翻译的内容:" ></textarea>
+        <textarea id="output" cols="30" rows="10"></textarea>
+
+
+        <div class="button-box">
+            <button id="translate">翻译</button>
+            <button id="auto-pronunciation" >自动发音: 开</button>
+        </div>
+    </div>
+
+    <script>
+        const translate = document.getElementById('translate');
+        const auto_pronunciation = document.getElementById('auto-pronunciation');
+        const input = document.getElementById('input');
+        const output = document.getElementById('output');
+        let   is_auto_pronunciation = true;
+        let   timer;
+        input.oninput = function(ev) {
+            // 减少不必要的请求
+            if (timer) {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(() => {
+                translateFun(); // 正在输入时的翻译不需要发音
+            }, 1500);
+        };
+
+        translate.onclick = function () {
+            translateFun().then(result => {
+                pronunciation(result.speakUrl); // 需要发音
+            });
+        };
+        // 开关自动翻译
+        auto_pronunciation.onclick = function () {
+            if (is_auto_pronunciation) {
+                auto_pronunciation.textContent = '自动发音: 关';
+                auto_pronunciation.style.backgroundColor = 'rgb(169, 169, 169)';
+            } else {
+                auto_pronunciation.textContent = '自动发音: 开';
+                auto_pronunciation.style.backgroundColor = 'rgb(50, 226, 203)';
+            }
+            is_auto_pronunciation = !is_auto_pronunciation;
+        };
+
+        async function translateFun() {
+            let result = await send(input.value);
+            if (!result) return {};
+            // console.log(result);
+            // console.log(result.speakUrl); // 翻译前的语音
+            // console.log(result.tSpeakUrl); // 翻译后的语音
+
+            if (result.basic && result.basic.explains) {
+                let value = "";
+                result.basic.explains.forEach(element => {
+                    value += element + '\n'; //让其换行
+                });
+                output.value = value;
+            } else if (result.translation) {
+                output.value = result.translation;
+            } else {
+                output.value = "";
+            }
+
+            return result;
+        };
+
+        function pronunciation(speakUrl) {
+            if (is_auto_pronunciation && speakUrl) {
+                let audio = document.createElement('audio');
+                audio.src = speakUrl;
+                audio.hidden = true;
+                document.body.append(audio);
+                audio.play();
+            }
+        }
+
+        async function send(q, from = 'Auto', to = 'Auto') {
+            if (!q) return;
+            let result = null;
+            await $.ajax({
+                url: 'https://aidemo.youdao.com/trans',
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    q,
+                    from,
+                    to,
+                },
+                success(data) {
+                    result = data;
+                },
+                error() {alert('翻译出错了');}
+            });
+            return result;
+        }
+
+
+    </script>
+</body>
+</html>

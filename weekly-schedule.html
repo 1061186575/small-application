@@ -56,19 +56,18 @@
         const auto_save = document.getElementById('auto-save');
         const add_row = document.getElementById('add-row');
         const template_string = tbody.innerHTML;
-        
+
         // 页面初始化数据: 首次加载和重置的时候使用的数据, 其他的时候使用localStorage里的数据
         const initData = [
-                ["时间段", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
-                ["一大节", "", "", "", "", "", "", ""],
-                ["二大节", "", "", "", "", "", "", ""],
-                ["中午", "", "", "", "", "", "", ""],
-                ["三大节", "", "", "", "", "", "", ""],
-                ["四大节", "", "", "", "", "", "", ""],
-                ["7:00~9:00", "", "", "", "", "", "", ""],
-                ["9:00~10:30", "", "", "", "", "", "", ""],
-                ["9:00~10:30", "", "", "", "", "", "", ""],
-                ["9:00~10:30", "", "", "", "", "", "", ""],
+                ["7:00~9:00", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
+                ["9:00~11:00", "", "", "", "", "", "", ""],
+                ["11:00~13:00", "", "", "", "", "", "", ""],
+                ["13:00~15:00", "", "", "", "", "", "", ""],
+                ["15:00~17:00", "", "", "", "", "", "", ""],
+                ["17:00~19:00", "", "", "", "", "", "", ""],
+                ["19:00~21:00", "", "", "", "", "", "", ""],
+                ["21:00~23:00", "", "", "", "", "", "", ""],
+                ["23:00~00:30", "", "", "", "", "", "", ""],
             ];
 
         // 判断initData是否有误
@@ -85,7 +84,7 @@
         //浏览器保存的数据
         let localStorageData = JSON.parse(localStorage.getItem('weekly-schedule'));
         let rowCount = localStorageData[0].length;
-        
+
         function renderData(data) {
             // 将table里的tr重复data.length份并添加到页面
             tbody.innerHTML = template_string.repeat(data.length);
@@ -95,7 +94,7 @@
                 textarea[i].value = data[index][i % rowCount];
             }
         }
-    
+
         // 页面重置
         function resetFun(e) {
             if (e && !confirm('确定重置?')) return;
@@ -135,7 +134,7 @@
                 auto_save.textContent = 'auto-save: on';
                 auto_save.style.backgroundColor = 'rgb(50, 226, 203)';
             }
-        }
+        };
 
         // 如果更改了initData的数据长度, 可能会与原先localStorage保存的数据不一致, 询问是否重置数据
         function verify() {
